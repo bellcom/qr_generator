@@ -112,4 +112,16 @@ interface QRGeneratorInterface extends ContentEntityInterface, EntityChangedInte
      *   The called QR Code entity.
      */
     public function setOutgoingURL($url);
+
+    /**
+     * Updates url_redirections on entity with the current value + 1
+     */
+     public function newVisit();
+
+     /**
+      * Returns current amount of URL redirects
+      *
+      * @return integer
+      */
+      public function getURLRedirections();
 }

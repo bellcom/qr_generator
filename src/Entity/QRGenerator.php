@@ -155,7 +155,11 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
     foreach ($this->get('incoming_url')->getIterator() as $url) {
       $label = $url->get('title')->getValue();
       $link = new Link($label, $url->getUrl());
-      return Link::fromTextAndUrl($link->getText(), $link->getUrl());
+      if (empty($label)) {
+        return Link::fromTextAndUrl($link->getUrl()->toString(), $link->getUrl());
+      } else {
+        return Link::fromTextAndUrl($link->getText(), $link->getUrl());
+      }
     }
   }
 
@@ -174,7 +178,11 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
     foreach ($this->get('outgoing_url')->getIterator() as $url) {
       $label = $url->get('title')->getValue();
       $link = new Link($label, $url->getUrl());
-      return Link::fromTextAndUrl($link->getText(), $link->getUrl());
+      if (empty($label)) {
+        return Link::fromTextAndUrl($link->getUrl()->toString(), $link->getUrl());
+      } else {
+        return Link::fromTextAndUrl($link->getText(), $link->getUrl());
+      }
     }
   }
 
@@ -185,6 +193,21 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
     $this->set('outgoing_url', $url);
     return $this;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+   public function getURLRedirections() {
+     return $this->get('url_redirections')->value;
+   }
+
+  /**
+   * {@inheritdoc}
+   */
+   public function newVisit() {
+     $this->set('url_redirections', $this->get('url_redirections')->value + 1);
+     return $this;
+   }
 
   /**
    * {@inheritdoc}
@@ -277,6 +300,19 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['url_redirections'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('URL Redirects'))
+      ->setDescription(t('The amount of URL redirects.'))
+      ->setReadOnly(TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['url_status'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('URL status'))
+      ->setDescription(t('The name of the QR Code entity.'))
+      ->setReadOnly(TRUE)
+      ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')

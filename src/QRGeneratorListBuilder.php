@@ -27,6 +27,7 @@ class QRGeneratorListBuilder extends EntityListBuilder {
     $header['name'] = $this->t('Name');
     $header['incoming_url'] = $this->t('URL (incoming)');
     $header['outgoing_url'] = $this->t('URL (outgoing)');
+    $header['url_redirections'] = $this->t('Redirects');
     return $header + parent::buildHeader();
   }
 
@@ -46,6 +47,7 @@ class QRGeneratorListBuilder extends EntityListBuilder {
     );
     $row['incoming_url'] = $entity->getIncomingURL();
     $row['outgoing_url'] = $entity->getOutgoingURL();
+    $row['url_redirections'] = $entity->getURLRedirections();
     return $row + parent::buildRow($entity);
   }
 

@@ -1,0 +1,9 @@
+qr_generator.custom_redirect:
+  path: '/qr/{incoming_url}'
+  defaults:
+    _controller: '\Drupal\qr_generator\Controller\RedirectController::custom_redirect'
+    _title: 'Redirect'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE

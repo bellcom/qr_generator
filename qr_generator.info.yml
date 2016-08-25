@@ -1,0 +1,5 @@
+name: QR Generator
+type: module
+description: Module for creating QR codes
+core: 8.x
+package: Bellcom

@@ -1,0 +1,16 @@
+{
+  "name": "drupal/qr_generator",
+  "type": "drupal-module",
+  "description": "Module for creating QR codes",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/qr_generator",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/qr_generator",
+    "source": "http://cgit.drupalcode.org/qr_generator"
+  },
+  "require": {
+    "aferrandini/phpqrcode": "^1.0"
+  }
+}

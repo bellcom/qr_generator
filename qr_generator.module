@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains qr_generator.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function qr_generator_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the qr_generator module.
+    case 'help.page.qr_generator':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Module for creating QR codes') . '</p>';
+      return $output;
+
+    default:
+  }
+}

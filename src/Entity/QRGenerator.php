@@ -227,7 +227,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
    /**
     * {@inheritdoc}
     */
-   public function setURLStatus() {
+   public function setURLStatus($status) {
      $this->set('url_status', $status);
      return $this;
    }

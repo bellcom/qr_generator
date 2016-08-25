@@ -5,8 +5,11 @@
  * Contains qr_generator.module..
  */
 
+use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\qr_generator\Entity\QRGenerator;
+use Drupal\user\Entity\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
@@ -44,24 +47,82 @@ function qr_generator_entity_presave(\Drupal\qr_generator\Entity\QRGenerator $en
  * Implements hook_cron().
  */
 function qr_generator_cron() {
-	$client = new GuzzleHttp\Client();
+  $client = new GuzzleHttp\Client();
 
-	$qr_codes = QRGenerator::loadMultiple();
+  $qr_codes = QRGenerator::loadMultiple();
+  $statuses = array();
 
   // Collect statuses and ID's
-	foreach ($qr_codes as $qr_code) {
-		try {
-			$res = $client->request('GET', $qr_code->getOutgoingURL()->toString());
-			$status = $res->getStatusCode();
-		} catch (BadResponseException $e) {
-			$status = $e->getResponse()->getStatusCode();
-		} catch (RequestException $e) {
-			$status = '?'; // Some other error
-		}
+  foreach ($qr_codes as $qr_code) {
+    try {
+      $res = $client->request('GET', $qr_code->getOutgoingURL()->toString());
+      $status = $res->getStatusCode();
+    } catch (BadResponseException $e) {
+      $status = $e->getResponse()->getStatusCode();
+    } catch (RequestException $e) {
+      $status = '?'; // Some other error
+    }
 
-    $status = '200' ? 'OK' : 'FAILED';
+    $status == '200' ? $status = 'OK' : $status = 'FAILED';
 
     $qr_code->setURLStatus($status);
     $qr_code->save();
+
+    $statuses[$qr_code->id()] = $status;
 	}
+  qr_generator_send_status_mail($statuses);
+}
+
+function qr_generator_send_status_mail($statuses) {
+  $failed = array();
+  $to = '';
+
+  $ids = \Drupal::entityQuery('user')
+  ->condition('status', 1)
+  ->condition('roles', 'Administrator')
+  ->execute();
+  $users = User::loadMultiple($ids);
+
+  foreach ($users as $user) {
+    $to .= $user->getEmail() . ',';
+  }
+
+  foreach ($statuses as $id => $status) {
+    if ($status == 'FAILED') {
+      $entity = QRGenerator::load($id);
+      $failed[$id] = $entity->getName();
+    }
+  }
+
+  if (!empty($failed)) {
+    $mailManager = \Drupal::service('plugin.manager.mail');
+    $module = 'qr_generator';
+    $key = 'qr_code_status_failed';
+    $langcode = \Drupal::currentUser()->getPreferredLangcode();
+    $params['failed'] = $failed;
+    $mailManager->mail($module, $key, $to, $langcode, $params, $send = FALSE);
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function qr_generator_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+
+  switch ($key) {
+  case 'qr_code_status_failed':
+    $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+    $message['subject'] = t('Some QR code failed validation');
+    $message['body'][] = SafeMarkup::checkPlain(t('The following QR codes failed:<br />'));
+    $url = \Drupal::request()->getHost();;
+    $message['body'][] = SafeMarkup::checkPlain('<ul>');
+    foreach ($params['failed'] as $id => $title) {
+      $message['body'][] = SafeMarkup::checkPlain('<li><a href="http://' . $url . '/admin/structure/qr_generator/' . $id . '/edit' . '">' . $title . "</a></li>");
+    }
+    $message['body'][] = SafeMarkup::checkPlain('</ul>');
+    break;
+  }
 }

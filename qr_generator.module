@@ -6,6 +6,10 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\qr_generator\Entity\QRGenerator;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Implements hook_help().
@@ -34,4 +38,30 @@ function qr_generator_entity_presave(\Drupal\qr_generator\Entity\QRGenerator $en
     $url = strtolower($url);
     $entity->setIncomingURL($url);
   }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function qr_generator_cron() {
+	$client = new GuzzleHttp\Client();
+
+	$qr_codes = QRGenerator::loadMultiple();
+
+  // Collect statuses and ID's
+	foreach ($qr_codes as $qr_code) {
+		try {
+			$res = $client->request('GET', $qr_code->getOutgoingURL()->toString());
+			$status = $res->getStatusCode();
+		} catch (BadResponseException $e) {
+			$status = $e->getResponse()->getStatusCode();
+		} catch (RequestException $e) {
+			$status = '?'; // Some other error
+		}
+
+    $status = '200' ? 'OK' : 'FAILED';
+
+    $qr_code->setURLStatus($status);
+    $qr_code->save();
+	}
 }

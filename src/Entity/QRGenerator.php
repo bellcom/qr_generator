@@ -177,9 +177,18 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
   /**
    * {@inheritdoc}
    */
-  public function getOutgoingURL() {
+   public function getOutgoingURL() {
+     foreach ($this->get('outgoing_url')->getIterator() as $url) {
+       return $url->getUrl();
+     }
+   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOutgoingLink() {
     if ($this->get('outgoing_url')->isEmpty()) {
-      return 'N/A';
+      return $this->t('N/A');
     }
     foreach ($this->get('outgoing_url')->getIterator() as $url) {
       $label = $url->get('title')->getValue();
@@ -218,6 +227,21 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
    /**
     * {@inheritdoc}
     */
+   public function setURLStatus() {
+     $this->set('url_status', $status);
+     return $this;
+   }
+
+   /**
+    * {@inheritdoc}
+    */
+   public function getURLStatus() {
+     return $this->get('url_status')->value;
+   }
+
+   /**
+    * {@inheritdoc}
+    */
     public static function getIDByIncomingURL($url) {
       $id = \Drupal::entityQuery('qr_generator')
         ->condition('status', 1)
@@ -241,7 +265,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
       * {@inheritdoc}
       */
      public function redirect() {
-       return new TrustedRedirectResponse($this->getOutgoingURL()->getUrl()->toString());
+       return new TrustedRedirectResponse($this->getOutgoingLink()->getUrl()->toString());
      }
 
   /**
@@ -346,6 +370,20 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
     $fields['url_status'] = BaseFieldDefinition::create('string')
       ->setLabel(t('URL status'))
       ->setDescription(t('The name of the QR Code entity.'))
+      ->setReadOnly(TRUE)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['qr_image'] = BaseFieldDefinition::create('uri')
+      ->setLabel(t('QR image'))
+      ->setDescription(t('The QR code image.'))
+      ->setReadOnly(TRUE)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['qr_image_logo'] = BaseFieldDefinition::create('uri')
+      ->setLabel(t('QR image logo'))
+      ->setDescription(t('Logo placed on QR code.'))
       ->setReadOnly(TRUE)
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);

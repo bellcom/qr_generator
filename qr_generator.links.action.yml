@@ -1,0 +1,5 @@
+entity.qr_generator.add_form:
+  route_name: entity.qr_generator.add_form
+  title: 'Add QR Code'
+  appears_on:
+    - entity.qr_generator.collection

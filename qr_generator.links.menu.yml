@@ -1,0 +1,13 @@
+# QR Code menu items definition
+entity.qr_generator.collection:
+  title: 'QR Code list'
+  route_name: entity.qr_generator.collection
+  description: 'List QR Code entities'
+  parent: system.admin_structure
+  weight: 100
+
+qr_generator.admin.structure.settings:
+  title: QR Code settings
+  description: 'Configure QR Code entities'
+  route_name: qr_generator.settings
+  parent: system.admin_structure

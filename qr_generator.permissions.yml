@@ -1,0 +1,19 @@
+add qr code entities:
+  title: 'Create new QR Code entities'
+
+administer qr code entities:
+  title: 'Administer QR Code entities'
+  description: 'Allow to access the administration form to configure QR Code entities.'
+  restrict access: true
+
+delete qr code entities:
+  title: 'Delete QR Code entities'
+
+edit qr code entities:
+  title: 'Edit QR Code entities'
+
+view published qr code entities:
+  title: 'View published QR Code entities'
+
+view unpublished qr code entities:
+  title: 'View unpublished QR Code entities'

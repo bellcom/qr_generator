@@ -1,0 +1,22 @@
+{#
+/**
+ * @file qr_generator.html.twig
+ * Default theme implementation to present QR Code data.
+ *
+ * This template is used when viewing QR Code pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_qr_generator()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('qr_generator') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

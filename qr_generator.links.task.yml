@@ -1,0 +1,21 @@
+# QR Code routing definition
+qr_generator.settings_tab:
+  route_name: qr_generator.settings
+  title: 'Settings'
+  base_route: qr_generator.settings
+entity.qr_generator.canonical:
+  route_name: entity.qr_generator.canonical
+  base_route: entity.qr_generator.canonical
+  title: 'View'
+
+entity.qr_generator.edit_form:
+  route_name: entity.qr_generator.edit_form
+  base_route: entity.qr_generator.canonical
+  title: Edit
+
+entity.qr_generator.delete_form:
+  route_name:  entity.qr_generator.delete_form
+  base_route:  entity.qr_generator.canonical
+  title: Delete
+  weight: 10
+

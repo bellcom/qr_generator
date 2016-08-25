@@ -7,15 +7,17 @@
 
 namespace Drupal\qr_generator\Entity;
 
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Link;
+use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\Core\Url;
 use Drupal\qr_generator\QRGeneratorInterface;
 use Drupal\user\UserInterface;
-use Drupal\Core\Link;
-use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Defines the QR Code entity.
@@ -167,7 +169,8 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
    * {@inheritdoc}
    */
   public function setIncomingURL($url) {
-    $this->set('incoming_url', $url);
+    $url = '/qr/' . $url;
+    $this->set('incoming_url', 'internal:' . $url);
     return $this;
   }
 
@@ -175,6 +178,9 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
    * {@inheritdoc}
    */
   public function getOutgoingURL() {
+    if ($this->get('outgoing_url')->isEmpty()) {
+      return 'N/A';
+    }
     foreach ($this->get('outgoing_url')->getIterator() as $url) {
       $label = $url->get('title')->getValue();
       $link = new Link($label, $url->getUrl());
@@ -201,13 +207,42 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
      return $this->get('url_redirections')->value;
    }
 
-  /**
-   * {@inheritdoc}
-   */
-   public function newVisit() {
-     $this->set('url_redirections', $this->get('url_redirections')->value + 1);
+   /**
+    * {@inheritdoc}
+    */
+   public function setURLRedirections($amount) {
+     $this->set('url_redirections', $amount);
      return $this;
    }
+
+   /**
+    * {@inheritdoc}
+    */
+    public static function getIDByIncomingURL($url) {
+      $id = \Drupal::entityQuery('qr_generator')
+        ->condition('status', 1)
+        ->condition('incoming_url__uri', 'internal:/qr/' . $url)
+        ->execute();
+
+      return reset($id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+     public function increaseURLRedirectCount($id) {
+       $entity = QRGenerator::load($id);
+       $amount = $entity->getURLRedirections() + 1;
+       $entity->setURLRedirections($amount);
+       $entity->save();
+     }
+
+     /**
+      * {@inheritdoc}
+      */
+     public function redirect() {
+       return new TrustedRedirectResponse($this->getOutgoingURL()->getUrl()->toString());
+     }
 
   /**
    * {@inheritdoc}

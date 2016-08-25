@@ -114,9 +114,11 @@ interface QRGeneratorInterface extends ContentEntityInterface, EntityChangedInte
     public function setOutgoingURL($url);
 
     /**
-     * Updates url_redirections on entity with the current value + 1
+     * Sets the amount of URL redirects
+     *
+     * @return integer
      */
-     public function newVisit();
+     public function setURLRedirections($amount);
 
      /**
       * Returns current amount of URL redirects

@@ -22,3 +22,16 @@ function qr_generator_help($route_name, RouteMatchInterface $route_match) {
     default:
   }
 }
+
+/**
+ * Implements hook_entity_presave();
+ */
+function qr_generator_entity_presave(\Drupal\qr_generator\Entity\QRGenerator $entity) {
+  if ($entity->isNew()) {
+    $url = str_replace(' ', '-', $entity->getName());
+    $url = str_replace(array('æ', 'ø', 'å', ' '), array('ae', 'oe', 'aa', '-'), $entity->getName());
+    $url = preg_replace('/[^A-Za-z0-9\-]/', '', $url);
+    $url = strtolower($url);
+    $entity->setIncomingURL($url);
+  }
+}

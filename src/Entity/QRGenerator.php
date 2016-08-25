@@ -14,6 +14,8 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\qr_generator\QRGeneratorInterface;
 use Drupal\user\UserInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 
 /**
  * Defines the QR Code entity.
@@ -149,6 +151,44 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
   /**
    * {@inheritdoc}
    */
+  public function getIncomingURL() {
+    foreach ($this->get('incoming_url')->getIterator() as $url) {
+      $label = $url->get('title')->getValue();
+      $link = new Link($label, $url->getUrl());
+      return Link::fromTextAndUrl($link->getText(), $link->getUrl());
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setIncomingURL($url) {
+    $this->set('incoming_url', $url);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOutgoingURL() {
+    foreach ($this->get('outgoing_url')->getIterator() as $url) {
+      $label = $url->get('title')->getValue();
+      $link = new Link($label, $url->getUrl());
+      return Link::fromTextAndUrl($link->getText(), $link->getUrl());
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOutgoingURL($url) {
+    $this->set('outgoing_url', $url);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
@@ -163,6 +203,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the QR Code entity.'))
       ->setRevisionable(TRUE)
+      ->setRequired(true)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
@@ -192,6 +233,39 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         'max_length' => 50,
         'text_processing' => 0,
       ))
+      ->setRequired(true)
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'string_textfield',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['incoming_url'] = BaseFieldDefinition::create('link')
+      ->setLabel(t('Incoming URL'))
+      ->setDescription(t('The internal URL this QR code listening to.'))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'string_textfield',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['outgoing_url'] = BaseFieldDefinition::create('link')
+      ->setLabel(t('Outgoing URL'))
+      ->setDescription(t('The URL this QR code redirects to.'))
       ->setDefaultValue('')
       ->setDisplayOptions('view', array(
         'label' => 'above',

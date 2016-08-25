@@ -25,6 +25,8 @@ class QRGeneratorListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header['id'] = $this->t('QR Code ID');
     $header['name'] = $this->t('Name');
+    $header['incoming_url'] = $this->t('URL (incoming)');
+    $header['outgoing_url'] = $this->t('URL (outgoing)');
     return $header + parent::buildHeader();
   }
 
@@ -42,6 +44,8 @@ class QRGeneratorListBuilder extends EntityListBuilder {
         )
       )
     );
+    $row['incoming_url'] = $entity->getIncomingURL();
+    $row['outgoing_url'] = $entity->getOutgoingURL();
     return $row + parent::buildRow($entity);
   }
 

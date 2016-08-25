@@ -77,4 +77,39 @@ interface QRGeneratorInterface extends ContentEntityInterface, EntityChangedInte
    */
   public function setPublished($published);
 
+  /**
+   * Returns the URL the QR code listens to.
+   *
+   * @return string
+   */
+   public function getIncomingURL();
+
+   /**
+    * Returns the URL the QR code redirects to.
+    *
+    * @return string
+    */
+    public function getOutgoingURL();
+
+    /**
+     * Sets the listening URL on the QR Code.
+     *
+     * @param bool $url
+     *   The URL we listen to.
+     *
+     * @return \Drupal\qr_generator\QRGeneratorInterface
+     *   The called QR Code entity.
+     */
+    public function setIncomingURL($url);
+
+    /**
+     * Sets the URL we want to redirect to on the QR Code.
+     *
+     * @param bool $url
+     *   The URL we want to redirect to.
+     *
+     * @return \Drupal\qr_generator\QRGeneratorInterface
+     *   The called QR Code entity.
+     */
+    public function setOutgoingURL($url);
 }

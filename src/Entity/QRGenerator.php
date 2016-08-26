@@ -197,7 +197,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
    */
   public function getOutgoingLink() {
     if ($this->get('outgoing_url')->isEmpty()) {
-      return $this->t('N/A');
+      return t('N/A');
     }
     foreach ($this->get('outgoing_url')->getIterator() as $url) {
       $label = $url->get('title')->getValue();
@@ -274,7 +274,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
       * {@inheritdoc}
       */
      public function redirect() {
-       return new TrustedRedirectResponse($this->getOutgoingLink()->getUrl()->toString());
+       return new TrustedRedirectResponse($this->getOutgoingURL()->toString());
      }
 
   /**

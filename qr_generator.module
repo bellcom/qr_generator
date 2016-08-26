@@ -5,6 +5,8 @@
  * Contains qr_generator.module..
  */
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -13,6 +15,8 @@ use Drupal\user\Entity\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
+use Drupal\file\Entity\File;
+use PHPQRCode\QRcode;
 
 /**
  * Implements hook_help().
@@ -41,6 +45,38 @@ function qr_generator_entity_presave(\Drupal\qr_generator\Entity\QRGenerator $en
     $url = strtolower($url);
     $entity->setIncomingURL($url);
   }
+}
+
+/**
+ * Implements hook_entity_insert();
+ */
+function qr_generator_entity_insert(\Drupal\qr_generator\Entity\QRGenerator $entity) {
+  $img_dir = sprintf('public://%s', date("Y-m"));
+  $dest_uri = sprintf('%s/%s.png', $img_dir, $entity->getName());
+
+  file_prepare_directory($img_dir, FILE_CREATE_DIRECTORY);
+
+  // Create a new image
+  $data = qr_generator_qr_img_stream($entity->getIncomingURL()->toString());
+  $file = file_save_data($data, $dest_uri);
+
+  // // Add logo to that image
+  // if (isset($node->get('field_qr_logo')->target_id)) {
+  //   $tmp_file = $file;
+  //   $logo_file = File::load($node->get('field_qr_logo')->target_id);
+  //   $file = _custom_qr_generator_add_logo_2_qr($file, $logo_file);
+  //   $tmp_file->delete();
+  //   $logo_file->delete();
+  // }
+
+  // Attach that new image with a node
+  $entity->qr_img->setValue(array(
+    'alt' => $entity->getIncomingURL(),
+    'display' => '1',
+    'target_id' => $file->id(),
+  ));
+
+  $entity->save();
 }
 
 /**
@@ -126,3 +162,74 @@ function qr_generator_mail($key, &$message, $params) {
     break;
   }
 }
+
+function qr_generator_qr_img_stream($msg) {
+	$source_data = function($m) {
+		ob_start();
+		QRcode::png($m, false, 3, 5, 2);
+		$result = ob_get_contents();
+		ob_end_clean();
+
+		return $result;
+	};
+
+	ob_start();
+	header('Content-Type: image/png');
+
+	$source_img = imagecreatefromstring($source_data($msg));
+	$old_w = imagesx($source_img);
+	$old_h = imagesy($source_img);
+	$size = 200;
+	$dest_img = imagecreatetruecolor($size, $size);
+
+	imagecopyresampled($dest_img, $source_img, 0, 0, 0, 0, $size, $size, $old_w, $old_h);
+	imagepng($dest_img);
+	imagedestroy($dest_img);
+
+	$content = ob_get_contents();
+	ob_end_clean();
+
+	return $content;
+}
+
+// function qr_generator_add_logo_2_qr($qr_img_obj, $qr_logo_obj) {
+//
+// 	ob_start();
+// 	header('Content-type: image/png');
+//
+// 	$QR = imagecreatefromstring(file_get_contents($qr_img_obj->getFileUri()));
+// 	$logo = imagecreatefromstring(file_get_contents($qr_logo_obj->getFileUri()));
+//
+// 	$QR_width = imagesx($QR);
+// 	$QR_height = imagesy($QR);
+// 	$logo_width = imagesx($logo);
+// 	$logo_height = imagesy($logo);
+//
+// 	// Scale logo to fit in the QR Code
+// 	if ($logo_width >= $logo_height) {
+// 		$logo_qr_width = $QR_width / 2.3;
+// 		$scale = $logo_width / $logo_qr_width;
+// 		$logo_qr_height = $logo_height / $scale;
+// 	} else {
+// 		$logo_qr_height = $QR_height / 2.3;
+// 		$scale = $logo_height / $logo_qr_height;
+// 		$logo_qr_width = $logo_width / $scale;
+// 	}
+//
+// 	imagecopyresampled(
+// 		$QR, $logo,
+// 		(($QR_width / 2) - ($logo_qr_width / 2)),
+// 		(($QR_height / 2) - ($logo_qr_height / 2)),
+// 		0, 0,
+// 		$logo_qr_width, $logo_qr_height, $logo_width, $logo_height
+// 	);
+//
+// 	imagepng($QR);
+// 	imagedestroy($QR);
+//
+// 	$img_stream = ob_get_contents();
+// 	ob_end_clean();
+//
+// 	$file = file_save_data($img_stream, $qr_img_obj->getFileUri());
+// 	return $file;
+// }

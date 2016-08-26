@@ -8,10 +8,11 @@ use \Drupal\qr_generator\Entity\QRGenerator;
 
 class RedirectController extends ControllerBase {
 	public function custom_redirect(Request $request) {
-		$incoming_url = $request->get('incoming_url');
-    $id = QRGenerator::getIDByIncomingURL($incoming_url);
+    $id = QRGenerator::getIDByIncomingURL($request->get('incoming_url'));
+
     $entity = QRGenerator::load($id);
     $entity->increaseURLRedirectCount($entity->id());
+
     return $entity->redirect();
 	}
 }

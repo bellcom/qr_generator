@@ -155,6 +155,15 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
    */
   public function getIncomingURL() {
     foreach ($this->get('incoming_url')->getIterator() as $url) {
+      return $url->getUrl();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getIncomingLink() {
+    foreach ($this->get('incoming_url')->getIterator() as $url) {
       $label = $url->get('title')->getValue();
       $link = new Link($label, $url->getUrl());
       if (empty($label)) {
@@ -374,17 +383,33 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['qr_image'] = BaseFieldDefinition::create('uri')
+    $fields['qr_image'] = BaseFieldDefinition::create('image')
       ->setLabel(t('QR image'))
       ->setDescription(t('The QR code image.'))
-      ->setReadOnly(TRUE)
+      ->setSetting('target_type', 'file')
+      ->setDisplayOptions('view', array(
+        'type' => 'image_image',
+        'weight' => 0
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'image_image',
+        'weight' => 0
+      ))
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['qr_image_logo'] = BaseFieldDefinition::create('uri')
+    $fields['qr_image_logo'] = BaseFieldDefinition::create('image')
       ->setLabel(t('QR image logo'))
       ->setDescription(t('Logo placed on QR code.'))
-      ->setReadOnly(TRUE)
+      ->setSetting('target_type', 'file')
+      ->setDisplayOptions('view', array(
+        'type' => 'image_image',
+        'weight' => 0
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'image_image',
+        'weight' => 0
+      ))
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
 

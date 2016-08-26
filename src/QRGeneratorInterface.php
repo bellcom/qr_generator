@@ -82,7 +82,7 @@ interface QRGeneratorInterface extends ContentEntityInterface, EntityChangedInte
    *
    * @return string
    */
-   public function getIncomingURL();
+   public function getIncomingLink();
 
    /**
     * Returns the URL the QR code redirects to.

@@ -46,7 +46,7 @@ class QRGeneratorListBuilder extends EntityListBuilder {
         )
       )
     );
-    $row['incoming_url'] = $entity->getIncomingURL();
+    $row['incoming_url'] = $entity->getIncomingLink();
     $row['outgoing_url'] = $entity->getOutgoingLink();
     $row['url_redirections'] = $entity->getURLRedirections();
     $row['url_status'] = $entity->getURLStatus();

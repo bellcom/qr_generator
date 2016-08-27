@@ -75,6 +75,16 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
     );
   }
 
+  public function preSave(EntityStorageInterface $storage) {
+    if ($this->isNew()) {
+      $url = str_replace(' ', '-', $this->getName());
+      $url = str_replace(array('æ', 'ø', 'å', ' '), array('ae', 'oe', 'aa', '-'), $this->getName());
+      $url = preg_replace('/[^A-Za-z0-9\-]/', '', $url);
+      $url = strtolower($url);
+      $this->setIncomingURL($url);
+    }
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -276,6 +286,29 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
      public function redirect() {
        return new TrustedRedirectResponse($this->getOutgoingURL()->toString());
      }
+
+     /**
+      * {@inheritdoc}
+      */
+      public function generateQR() {
+        $img_dir = sprintf('public://%s', date("Y-m"));
+        $dest_uri = sprintf('%s/%s.png', $img_dir, $this->getName());
+
+        file_prepare_directory($img_dir, FILE_CREATE_DIRECTORY);
+
+        // Create a new image
+        $data = qr_generator_generate_image($this->getIncomingURL()->toString());
+        $file = file_save_data($data, $dest_uri);
+
+        // Attach that new image to the entity
+        $this->qr_image->setValue(array(
+          'alt' => $this->getName(),
+          'display' => '1',
+          'target_id' => $file->id(),
+        ));
+
+        $this->save();
+      }
 
   /**
    * {@inheritdoc}

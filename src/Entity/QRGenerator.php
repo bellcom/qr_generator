@@ -15,6 +15,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\qr_generator\QRGeneratorInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\UserInterface;
@@ -76,6 +77,9 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function preSave(EntityStorageInterface $storage) {
     if ($this->isNew()) {
       $url = str_replace(' ', '-', $this->getName());
@@ -300,6 +304,12 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         // Create a new image
         $data = qr_generator_generate_image($this->getIncomingURL()->toString());
         $file = file_save_data($data, $dest_uri);
+
+        // Add QR logo to QR image
+        if (isset($this->qr_image_logo->target_id)) {
+         $logo_file = File::load($this->qr_image_logo->target_id);
+         $file = qr_generator_add_logo_2_qr($file, $logo_file);
+       }
 
         // Attach that new image to the entity
         $this->qr_image->setValue(array(

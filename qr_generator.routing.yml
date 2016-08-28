@@ -7,3 +7,12 @@ qr_generator.custom_redirect:
     _permission: 'access content'
   options:
     no_cache: TRUE
+
+qr_generator.qr_img_download:
+  path: '/qr-img-download/{tid}'
+  defaults:
+    _controller: '\Drupal\qr_generator\Controller\QRDownloadController::download'
+    _title: 'QR Image Download'
+  requirements:
+    _permission: 'access content'
+    nid: ^[0-9]+ # accept only numbers

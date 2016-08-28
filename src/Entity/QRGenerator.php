@@ -16,6 +16,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
 use Drupal\qr_generator\QRGeneratorInterface;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -413,7 +414,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
       ->setLabel(t('URL status'))
       ->setDescription(t('The name of the QR Code entity.'))
       ->setReadOnly(TRUE)
-      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['qr_image'] = BaseFieldDefinition::create('image')
@@ -428,7 +429,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         'type' => 'image_image',
         'weight' => 0
       ))
-      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['qr_image_logo'] = BaseFieldDefinition::create('image')
@@ -444,6 +445,33 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         'weight' => 0
       ))
       ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['categories'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Categories'))
+      ->setDescription(t('One or multiple categories'))
+      ->setSetting('target_type', 'taxonomy_term')
+      ->setSetting('handler_settings', array(
+        'target_bundles' => array(
+          'taxonomy_term' => 'qr_generator_category'
+        ),
+        'auto_create' => TRUE,
+      ))
+      ->setCardinality(-1)
+      ->setDisplayOptions('view', array(
+        'weight' => 10,
+        'label' => 'above',
+        'type' => 'taxonomy_term',
+      ))
+     ->setDisplayOptions('form', array(
+      'weight' => 10,
+      'type' => 'taxonomy_term',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'autocomplete_type' => 'tags',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')

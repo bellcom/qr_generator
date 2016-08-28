@@ -12,6 +12,8 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\file\Entity\File;
 use Drupal\qr_generator\Entity\QRGenerator;
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
@@ -153,15 +155,36 @@ function qr_generator_generate_image($msg) {
 
 function qr_generator_install() {
   // Create QR Admin and QR Editor role
-  $editor_role = \Drupal\user\Entity\Role::create(array(
-    'id' => 'qr_editor',
-    'label' => 'QR Editor'
-  ));
-  $editor_role->save();
+  $roles = Role::loadMultiple();
 
-  $admin_role = \Drupal\user\Entity\Role::create(array(
-    'id' => 'qr_admin',
-    'label' => 'QR Admin'
-  ));
-  $admin_role->save();
+  $rid = 'qr_editor';
+  if (!isset($roles[$rid])) {
+    $editor_role = Role::create(array(
+      'id' => 'qr_editor',
+      'label' => 'QR Editor'
+    ));
+    $editor_role->save();
+  }
+
+  $rid = 'qr_admin';
+  if (!isset($roles[$rid])) {
+    $admin_role = Role::create(array(
+      'id' => 'qr_admin',
+      'label' => 'QR Admin'
+    ));
+    $admin_role->save();
+  }
+
+  // Create QR category vocabulary
+  $vid = 'qr_generator_category';
+  $name = 'QR Category';
+  $vocabularies = Vocabulary::loadMultiple();
+  if (!isset($vocabularies[$vid])) {
+    $vocabulary = Vocabulary::create(array(
+          'vid' => $vid,
+          'machine_name' => $vid,
+          'name' => $name,
+    ));
+    $vocabulary->save();
+  }
 }

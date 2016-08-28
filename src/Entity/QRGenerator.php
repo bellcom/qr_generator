@@ -426,7 +426,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         'weight' => 0
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'image_image',
+        'type' => 'hidden',
         'weight' => 0
       ))
       ->setDisplayConfigurable('form', TRUE)

@@ -3,3 +3,5 @@ type: module
 description: Module for creating QR codes
 core: 8.x
 package: Bellcom
+libraries:
+  - qr_generator/icons

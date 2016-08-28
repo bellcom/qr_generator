@@ -125,32 +125,36 @@ function qr_generator_qr_generator_insert(Drupal\Core\Entity\EntityInterface $en
 }
 
 function qr_generator_generate_image($msg) {
-	$source_data = function($m) {
-		ob_start();
-		QRcode::png($m, false, 3, 5, 2);
-		$result = ob_get_contents();
-		ob_end_clean();
+  $source_data = function($m) {
+    ob_start();
+    QRcode::png($m, false, 3, 5, 2);
+    $result = ob_get_contents();
+    ob_end_clean();
 
-		return $result;
-	};
+    return $result;
+  };
 
-	ob_start();
-	header('Content-Type: image/png');
+  ob_start();
+  header('Content-Type: image/png');
 
-	$source_img = imagecreatefromstring($source_data($msg));
-	$old_w = imagesx($source_img);
-	$old_h = imagesy($source_img);
-	$size = 200;
-	$dest_img = imagecreatetruecolor($size, $size);
+  $source_img = imagecreatefromstring($source_data($msg));
+  $old_w = imagesx($source_img);
+  $old_h = imagesy($source_img);
+  $size = 200;
+  $dest_img = imagecreatetruecolor($size, $size);
 
-	imagecopyresampled($dest_img, $source_img, 0, 0, 0, 0, $size, $size, $old_w, $old_h);
-	imagepng($dest_img);
-	imagedestroy($dest_img);
+  imagecopyresampled($dest_img, $source_img, 0, 0, 0, 0, $size, $size, $old_w, $old_h);
+  imagepng($dest_img);
+  imagedestroy($dest_img);
 
-	$content = ob_get_contents();
-	ob_end_clean();
+  $content = ob_get_contents();
+  ob_end_clean();
 
-	return $content;
+  return $content;
+}
+
+function qr_generator_page_attachments(array &$page) {
+  $page['#attached']['library'][] = 'qr_generator/icons';
 }
 
 function qr_generator_install() {

@@ -22,14 +22,8 @@ class QRGeneratorViewsData extends EntityViewsData implements EntityViewsDataInt
 
     $data['qr_generator']['table']['base'] = array(
       'field' => 'id',
-      'title' => $this->t('QR Code'),
+      'title' => $this->t('QR Codes'),
       'help' => $this->t('The QR Code ID.'),
-    );
-
-    $data['qr_generator']['table']['base'] = array(
-      'field' => 'incoming_url',
-      'title' => $this->t('Incoming URL'),
-      'help' => $this->t('The URL of the QR code.'),
     );
 
     return $data;

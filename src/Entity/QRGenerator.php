@@ -7,6 +7,7 @@
 
 namespace Drupal\qr_generator\Entity;
 
+use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -202,9 +203,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
    * {@inheritdoc}
    */
    public function getOutgoingURL() {
-     foreach ($this->get('outgoing_url')->getIterator() as $url) {
-       return $url->getUrl();
-     }
+     return $this->outgoing_url->uri;
    }
 
   /**
@@ -289,7 +288,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
       * {@inheritdoc}
       */
      public function redirect() {
-       return new TrustedRedirectResponse($this->getOutgoingURL()->toString());
+       return new TrustedRedirectResponse($this->getOutgoingURL());
      }
 
      /**
@@ -455,6 +454,20 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         'weight' => 0
       ))
       ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['address'] = BaseFieldDefinition::create('address')
+      ->setLabel(t('Address'))
+      ->setDescription(t('Where the QR code is physically.'))
+      ->setDisplayOptions('form', array(
+        'type' => 'address',
+        'weight' => 0
+      ))
+      ->setDisplayOptions('view', array(
+        'type' => 'address',
+        'weight' => 0
+      ))
+      ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['categories'] = BaseFieldDefinition::create('entity_reference')

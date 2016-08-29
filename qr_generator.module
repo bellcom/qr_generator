@@ -15,9 +15,6 @@ use Drupal\qr_generator\Entity\QRGenerator;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\RequestException;
 use PHPQRCode\QRcode;
 
 /**
@@ -40,28 +37,13 @@ function qr_generator_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_cron().
  */
 function qr_generator_cron() {
-  $client = new GuzzleHttp\Client();
-
   $qr_codes = QRGenerator::loadMultiple();
   $statuses = array();
 
   // Collect statuses and ID's
   foreach ($qr_codes as $qr_code) {
-    try {
-      $res = $client->request('GET', $qr_code->getOutgoingURL()->toString());
-      $status = $res->getStatusCode();
-    } catch (BadResponseException $e) {
-      $status = $e->getResponse()->getStatusCode();
-    } catch (RequestException $e) {
-      $status = '?'; // Some other error
-    }
-
-    $status == '200' ? $status = 'OK' : $status = 'FAILED';
-
-    $qr_code->setURLStatus($status);
-    $qr_code->save();
-
-    $statuses[$qr_code->id()] = $status;
+    $qr_code->setURLStatus();
+    $statuses[$qr_code->id()] = $qr_code->getURLStatus();
 	}
   qr_generator_send_status_mail($statuses);
 }
@@ -72,7 +54,7 @@ function qr_generator_send_status_mail($statuses) {
 
   $ids = \Drupal::entityQuery('user')
   ->condition('status', 1)
-  ->condition('roles', 'Administrator')
+  ->condition('roles', 'qr_admin')
   ->execute();
   $users = User::loadMultiple($ids);
 

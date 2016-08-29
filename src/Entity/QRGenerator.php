@@ -20,6 +20,9 @@ use Drupal\file\Entity\File;
 use Drupal\qr_generator\QRGeneratorInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\UserInterface;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -89,6 +92,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
       $url = strtolower($url);
       $this->setIncomingURL($url);
     }
+    $this->setURLStatus();
   }
 
   /**
@@ -250,7 +254,20 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
    /**
     * {@inheritdoc}
     */
-   public function setURLStatus($status) {
+   public function setURLStatus() {
+     $client = new \GuzzleHttp\Client();
+
+     try {
+       $res = $client->request('GET', $this->getOutgoingURL());
+       $status = $res->getStatusCode();
+     } catch (BadResponseException $e) {
+       $status = $e->getResponse()->getStatusCode();
+     } catch (RequestException $e) {
+       $status = '?';
+     }
+
+     $status == '200' ? $status = 'OK' : $status = 'FAILED';
+
      $this->set('url_status', $status);
      return $this;
    }

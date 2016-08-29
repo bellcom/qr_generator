@@ -1,0 +1,13 @@
+uuid: 685d009f-0912-4aa3-bd35-093d3b835b63
+langcode: en
+status: true
+dependencies: {  }
+id: qr_editor
+label: 'QR Editor'
+weight: 3
+is_admin: null
+permissions:
+  - 'add qr code entities'
+  - 'edit qr code entities'
+  - 'view published qr code entities'
+  - 'view unpublished qr code entities'

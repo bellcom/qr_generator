@@ -500,6 +500,11 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the QR Code is published.'))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('form', array(
+        'type' => 'textfield',
+        'weight' => 10,
+      ))
       ->setDefaultValue(TRUE);
 
     $fields['langcode'] = BaseFieldDefinition::create('language')

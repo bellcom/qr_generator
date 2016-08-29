@@ -1,0 +1,12 @@
+uuid: ccb7b0e4-e18d-48d4-b3dc-8202f89dfd43
+langcode: en
+status: true
+dependencies: {  }
+id: qr_admin
+label: 'QR Admin'
+weight: 4
+is_admin: null
+permissions:
+  - 'administer qr code entities'
+  - 'add qr code entities'
+  - 'delete qr code entities'

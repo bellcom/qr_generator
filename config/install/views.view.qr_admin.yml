@@ -9,12 +9,13 @@ dependencies:
     - user.role.qr_admin
     - user.role.qr_editor
   module:
+    - address
     - image
     - link
     - qr_generator
     - user
 _core:
-  default_config_hash: Fwb9xpcDocN4v5zYkF_0G3Pazdd-JSYsXsDUGgKCfGY
+  default_config_hash: bauohksL5ztFQUa-by4AOnmXgiA66a6pxXC4Ey82KXk
 id: qr_admin
 label: 'QR Admin'
 module: views
@@ -97,6 +98,8 @@ display:
             url_status: url_status
             user_id: user_id
             operations: operations
+            address__langcode: address__langcode
+            status: status
           info:
             qr_image__target_id:
               sortable: false
@@ -156,6 +159,20 @@ display:
               sortable: false
               default_sort_order: asc
               align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            address__langcode:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            status:
+              sortable: true
+              default_sort_order: asc
+              align: views-align-center
               separator: ''
               empty_column: false
               responsive: ''
@@ -601,7 +618,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: ''
+          element_class: url_status
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -693,6 +710,137 @@ display:
           field_api_classes: false
           entity_type: qr_generator
           entity_field: user_id
+          plugin_id: field
+        address__langcode:
+          id: address__langcode
+          table: qr_generator
+          field: address__langcode
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Address
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: address_line1
+          type: address_default
+          settings: {  }
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: qr_generator
+          entity_field: address
+          plugin_id: field
+        status:
+          id: status
+          table: qr_generator
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Published
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: boolean
+          settings:
+            format: unicode-yes-no
+            format_custom_true: ''
+            format_custom_false: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: qr_generator
+          entity_field: status
           plugin_id: field
         operations:
           table: qr_generator

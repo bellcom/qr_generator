@@ -11,3 +11,8 @@ permissions:
   - 'edit qr code entities'
   - 'view published qr code entities'
   - 'view unpublished qr code entities'
+  - 'access toolbar'
+  - 'view the administration theme'
+  - 'access administration pages'
+  - 'administer qr_generator display'
+  - 'administer qr_generator form display'

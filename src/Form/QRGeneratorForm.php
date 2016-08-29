@@ -45,6 +45,7 @@ class QRGeneratorForm extends ContentEntityForm {
         drupal_set_message($this->t('Saved the %label QR Code.', [
           '%label' => $entity->label(),
         ]));
+        $entity->generateQR();
     }
     $form_state->setRedirect('entity.qr_generator.canonical', ['qr_generator' => $entity->id()]);
   }

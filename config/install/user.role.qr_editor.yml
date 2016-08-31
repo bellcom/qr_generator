@@ -1,4 +1,3 @@
-uuid: 685d009f-0912-4aa3-bd35-093d3b835b63
 langcode: en
 status: true
 dependencies: {  }
@@ -7,12 +6,10 @@ label: 'QR Editor'
 weight: 3
 is_admin: null
 permissions:
-  - 'add qr code entities'
-  - 'edit qr code entities'
-  - 'view published qr code entities'
-  - 'view unpublished qr code entities'
-  - 'access toolbar'
-  - 'view the administration theme'
-  - 'access administration pages'
-  - 'administer qr_generator display'
-  - 'administer qr_generator form display'
+    0: 'add qr code entities'
+    1: 'edit qr code entities'
+    2: 'view published qr code entities'
+    3: 'view unpublished qr code entities'
+    4: 'access toolbar'
+    5: 'view the administration theme'
+    6: 'access administration pages'

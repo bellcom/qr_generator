@@ -462,6 +462,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
       ->setLabel(t('QR image logo'))
       ->setDescription(t('Logo placed on QR code.'))
       ->setSetting('target_type', 'file')
+      ->setSetting('alt_field_required', FALSE)
       ->setDisplayOptions('view', array(
         'type' => 'image_image',
         'weight' => 0
@@ -470,7 +471,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         'type' => 'image_image',
         'weight' => 0
       ))
-      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['address'] = BaseFieldDefinition::create('address')

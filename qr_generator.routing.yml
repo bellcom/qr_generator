@@ -16,3 +16,10 @@ qr_generator.qr_img_download:
   requirements:
     _permission: 'access content'
     nid: ^[0-9]+ # accept only numbers
+
+qr_generator.admin:
+  path: '/admin/qr-admin'
+  defaults:
+    _title: 'QR Admin'
+  requirements:
+    _role: 'qr_admin+qr_editor'

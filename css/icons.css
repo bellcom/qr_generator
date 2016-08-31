@@ -1,7 +1,7 @@
-#toolbar-link-view-qr_admin-page_1:before {
+.toolbar-icon-qr:before {
   background-image: url("icons/787878/view-qr.svg");
 }
 
-#toolbar-link-view-qr_admin-page_1.is-active:before {
+.toolbar-icon-qr.is-active:before {
   background-image: url("icons/000000/view-qr.svg");
 }

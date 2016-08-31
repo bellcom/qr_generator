@@ -16,6 +16,7 @@ use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use PHPQRCode\QRcode;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_help().
@@ -179,6 +180,30 @@ function qr_generator_add_logo_2_qr($qr_img_obj, $qr_logo_obj) {
 
 	$file = file_save_data($img_stream, $qr_img_obj->getFileUri());
 	return $file;
+}
+
+/**
+ * Implements hook_toolbar().
+ */
+function qr_generator_toolbar() {
+    $items = array();
+
+    $items['qr_admin'] = array(
+        '#type' => 'toolbar_item',
+        'tab' => array(
+            '#type' => 'link',
+            '#title' => t('QR Admin'),
+            '#url' => Url::fromRoute('qr_generator.admin'),
+            '#options' => array(
+                'attributes' => array(
+                    'title' => t('QR Admin'),
+                    'class' => array('toolbar-icon', 'toolbar-item', 'toolbar-icon-qr'),
+                ),
+            ),
+        ),
+    );
+
+    return $items;
 }
 
 function qr_generator_install() {

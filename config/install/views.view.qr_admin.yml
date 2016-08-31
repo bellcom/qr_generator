@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - image.style.thumbnail
-    - system.menu.admin
     - user.role.administrator
     - user.role.qr_admin
     - user.role.qr_editor
@@ -919,6 +918,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
         - user.roles
       tags: {  }
@@ -931,7 +931,7 @@ display:
       display_extenders: {  }
       path: admin/qr-admin
       menu:
-        type: normal
+        type: none
         title: 'QR Admin'
         description: ''
         expanded: false
@@ -944,6 +944,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
         - user.roles
       tags: {  }

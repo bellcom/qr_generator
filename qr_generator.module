@@ -206,6 +206,22 @@ function qr_generator_toolbar() {
     return $items;
 }
 
+/**
+ * Implements hook_toolbar_alter().
+ */
+function qr_generator_toolbar_alter(&$items) {
+  $account = Drupal::currentUser()->getAccount();
+  $roles = $account->getRoles();
+
+  if (in_array('administrator', $roles)) {
+    return;
+  }
+
+  if (in_array('qr_admin', $roles) or in_array('qr_editor', $roles)) {
+    unset($items['administration']);
+  }
+}
+
 function qr_generator_install() {
   // Create QR Admin and QR Editor role
   $roles = Role::loadMultiple();

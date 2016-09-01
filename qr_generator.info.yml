@@ -4,11 +4,10 @@ description: 'Module for creating QR codes'
 core: 8.x
 package: Bellcom
 libraries:
-    - qr_generator/icons
+  - qr_generator/icons
 dependencies:
-    - 'address:address'
-    - address
-    - image
-    - link
-    - qr_generator
-    - user
+  - 'address:address'
+  - address
+  - image
+  - link
+  - user

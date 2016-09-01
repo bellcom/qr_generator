@@ -226,6 +226,10 @@ function qr_generator_toolbar_alter(&$items) {
  * Implements hook_form_alter().
  */
 function qr_generator_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'qr_generator_add_form') {
+    unset($form['incoming_url']['widget'][0]['uri']['#description']);
+    unset($form['outgoing_url']['widget'][0]['uri']['#description']);
+  }
  if ($form_id == 'qr_generator_edit_form') {
    unset($form['incoming_url']['widget'][0]['uri']['#description']);
    unset($form['outgoing_url']['widget'][0]['uri']['#description']);

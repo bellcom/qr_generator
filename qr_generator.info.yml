@@ -8,6 +8,7 @@ libraries:
 dependencies:
   - 'address:address'
   - address
+  - color_field
   - image
   - link
   - user

@@ -8,14 +8,11 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Drupal\Component\Utility\SafeMarkup;
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\file\Entity\File;
 use Drupal\qr_generator\Entity\QRGenerator;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
-use PHPQRCode\QRcode;
 use Drupal\Core\Url;
 
 /**
@@ -103,24 +100,24 @@ function qr_generator_mail($key, &$message, $params) {
   }
 }
 
-function qr_generator_qr_generator_insert(Drupal\Core\Entity\EntityInterface $entity) {
+function qr_generator_qr_generator_insert(QRGenerator $entity) {
   $entity->generateQR();
 }
 
-function qr_generator_generate_image($msg) {
-  $source_data = function($m) {
-    ob_start();
-    QRcode::png($m, false, 3, 5, 2);
-    $result = ob_get_contents();
-    ob_end_clean();
+function qr_generator_generate_image($msg, $back_color, $fore_color) {
+  $msg = \Drupal::request()->getHost() . $msg;
+  $back_color = hexdec(str_replace('#', '', $back_color));
+  $fore_color = hexdec(str_replace('#', '', $fore_color));
 
-    return $result;
-  };
+  ob_start();
+  QRCode::png($msg, false, QR_ECLEVEL_L, 3, 1, FALSE, $back_color, $fore_color);
+  $source_data = ob_get_contents();
+  ob_end_clean();
 
   ob_start();
   header('Content-Type: image/png');
 
-  $source_img = imagecreatefromstring($source_data($msg));
+  $source_img = imagecreatefromstring($source_data);
   $old_w = imagesx($source_img);
   $old_h = imagesy($source_img);
   $size = 200;
@@ -213,12 +210,10 @@ function qr_generator_toolbar_alter(&$items) {
   $account = Drupal::currentUser()->getAccount();
   $roles = $account->getRoles();
 
-  if (in_array('administrator', $roles)) {
-    return;
-  }
-
   if (in_array('qr_admin', $roles) or in_array('qr_editor', $roles)) {
-    unset($items['administration']);
+    if (!in_array('administrator', $roles)) {
+      unset($items['administration']);
+    }
   }
 }
 

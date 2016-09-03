@@ -7,7 +7,6 @@
 
 namespace Drupal\qr_generator\Entity;
 
-use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -15,15 +14,11 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\TrustedRedirectResponse;
-use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\qr_generator\QRGeneratorInterface;
-use Drupal\taxonomy\Entity\Term;
 use Drupal\user\UserInterface;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Defines the QR Code entity.
@@ -168,6 +163,20 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
   public function setPublished($published) {
     $this->set('status', $published ? NODE_PUBLISHED : NODE_NOT_PUBLISHED);
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackgroundColor() {
+    return $this->get('background_color')->color;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getForegroundColor() {
+    return $this->get('foreground_color')->color;
   }
 
   /**
@@ -318,7 +327,7 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
         file_prepare_directory($img_dir, FILE_CREATE_DIRECTORY);
 
         // Create a new image
-        $data = qr_generator_generate_image($this->getIncomingURL()->toString());
+        $data = qr_generator_generate_image($this->getIncomingURL()->toString(), $this->getBackgroundColor(), $this->getForegroundColor());
         $file = file_save_data($data, $dest_uri);
 
         // Add QR logo to QR image
@@ -501,6 +510,34 @@ class QRGenerator extends ContentEntityBase implements QRGeneratorInterface {
           'autocomplete_type' => 'tags',
         ),
       ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['foreground_color'] = BaseFieldDefinition::create('color_field_type')
+      ->setLabel(t('Foreground color'))
+      ->setDescription(t('The color of the QR Code image.'))
+      ->setDisplayOptions('form', array(
+        'type' => 'color_field_widget_spectrum',
+          'settings' => array(
+            'show_palette_only' => FALSE,
+          ),
+        'weight' => 10,
+      ))
+      ->setSetting('opacity', FALSE)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['background_color'] = BaseFieldDefinition::create('color_field_type')
+      ->setLabel(t('Background color'))
+      ->setDescription(t('The background color of the QR Code image.'))
+      ->setDisplayOptions('form', array(
+        'type' => 'color_field_widget_spectrum',
+          'settings' => array(
+            'show_palette_only' => FALSE,
+          ),
+        'weight' => 10,
+      ))
+      ->setSetting('opacity', FALSE)
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 

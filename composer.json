@@ -11,6 +11,6 @@
     "source": "http://cgit.drupalcode.org/qr_generator"
   },
   "require": {
-    "aferrandini/phpqrcode": "^1.0"
+    "kairos/phpqrcode": "^1.0"
   }
 }
